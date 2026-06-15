@@ -28,6 +28,8 @@ printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"].lower(); assert "short conceptual answers" in text and "default to one to three short paragraphs" in text and "avoid assessment-style headings" in text'
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"].lower(); assert "do not provide example phrasings" in text and "unless the user asks for wording" in text'
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"].lower(); assert "do not add optional-service tail sentences" in text'
+printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"].lower(); assert "permission-aware tool use" in text and "switch to a narrower allowed tool" in text'
+printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"].lower(); assert "match the user'\''s language" in text'
 
 prompt_submit_input='{"cwd":"'"$TMP/project"'","model":"claude-opus-4-8","hook_event_name":"UserPromptSubmit"}'
 prompt_submit_output="$(printf '%s' "$prompt_submit_input" | "$ROOT/hooks/fable-lite-context.sh")"

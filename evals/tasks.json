@@ -42,7 +42,7 @@
   {
     "id": "code-scoped-change",
     "kind": "code",
-    "prompt": "在不改功能的情况下，检查 tests/run.sh 有没有明显脆弱的断言。先读文件，只指出一个最值得修的小点，不要改代码。",
+    "prompt": "中文回答：在不改功能的情况下，检查 tests/run.sh 有没有明显脆弱的断言。先读文件，只指出一个最值得修的小点，不要改代码。",
     "checks": [
       "uses a file-reading tool",
       "keeps scope to one issue",
