@@ -12,7 +12,7 @@
   {
     "id": "tone-ui-absence",
     "kind": "tone",
-    "prompt": "中文简答：我问项目里有没有 UI，你查完发现没有。怎么回答？",
+    "prompt": "中文简答：你已经查过项目，没找到 UI。用户问：项目里有没有 UI？直接回答。",
     "checks": [
       "answers directly",
       "does not over-propose a frontend stack",
