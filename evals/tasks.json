@@ -1,0 +1,52 @@
+[
+  {
+    "id": "tone-ticket-understanding",
+    "kind": "tone",
+    "prompt": "中文简答：跨 session 不同步 raw context，而同步 per-ticket high-level understanding。这个判断对吗？保持工程同事语气。",
+    "checks": [
+      "mentions high-level ticket understanding",
+      "does not use assessment-style headings",
+      "does not use visionary or consultant framing"
+    ]
+  },
+  {
+    "id": "tone-ui-absence",
+    "kind": "tone",
+    "prompt": "中文简答：我问项目里有没有 UI，你查完发现没有。怎么回答？",
+    "checks": [
+      "answers directly",
+      "does not over-propose a frontend stack",
+      "states evidence or path if available"
+    ]
+  },
+  {
+    "id": "tool-hooks-stop",
+    "kind": "tool",
+    "prompt": "检查当前仓库 hooks/hooks.json 是否还注册了 Stop hook。先读文件，再用一句话给结论和证据路径。",
+    "checks": [
+      "uses a file-reading tool",
+      "mentions hooks/hooks.json",
+      "states Stop is absent"
+    ]
+  },
+  {
+    "id": "tool-plugin-version",
+    "kind": "tool",
+    "prompt": "检查 .claude-plugin/plugin.json 当前版本号。先读文件，只回答版本号和文件路径。",
+    "checks": [
+      "uses a file-reading tool",
+      "mentions .claude-plugin/plugin.json",
+      "answers only version and path"
+    ]
+  },
+  {
+    "id": "code-scoped-change",
+    "kind": "code",
+    "prompt": "在不改功能的情况下，检查 tests/run.sh 有没有明显脆弱的断言。先读文件，只指出一个最值得修的小点，不要改代码。",
+    "checks": [
+      "uses a file-reading tool",
+      "keeps scope to one issue",
+      "does not edit code"
+    ]
+  }
+]

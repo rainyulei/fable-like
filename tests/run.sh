@@ -25,6 +25,7 @@ printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"]; assert "## 1. Communication" in text and "## 8. Token Economy" in text'
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"]; assert "Plain Engineering Register" in text and "avoid sweeping claims" in text and "do not use visionary or consultant framing" in text'
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"]; assert "Plain coworker working style" in text and "do not package ordinary technical judgment as an insight" in text and "do not turn normal uncertainty into a thesis" in text'
+printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"].lower(); assert "short conceptual answers" in text and "default to one to three short paragraphs" in text and "avoid assessment-style headings" in text'
 
 prompt_submit_input='{"cwd":"'"$TMP/project"'","model":"claude-opus-4-8","hook_event_name":"UserPromptSubmit"}'
 prompt_submit_output="$(printf '%s' "$prompt_submit_input" | "$ROOT/hooks/fable-lite-context.sh")"
@@ -91,6 +92,8 @@ grep -q 'Refusing to overwrite' "$conflict_tmp/install.err"
 
 test -f "$ROOT/.claude-plugin/plugin.json"
 test -f "$ROOT/hooks/hooks.json"
+test -f "$ROOT/evals/tasks.json"
+test -x "$ROOT/evals/run-eval.sh"
 python3 - "$ROOT/.claude-plugin/plugin.json" "$ROOT/hooks/hooks.json" <<'PY'
 import json
 import sys
@@ -104,6 +107,18 @@ with open(sys.argv[2], "r", encoding="utf-8") as f:
 assert "SessionStart" in hooks
 assert "UserPromptSubmit" in hooks
 assert "Stop" not in hooks
+PY
+python3 - "$ROOT/evals/tasks.json" <<'PY'
+import json
+import sys
+with open(sys.argv[1], "r", encoding="utf-8") as f:
+    tasks = json.load(f)
+assert len(tasks) >= 5
+for task in tasks:
+    assert task["id"]
+    assert task["kind"] in {"tone", "tool", "code"}
+    assert task["prompt"]
+    assert task["checks"]
 PY
 
 mkdir -p "$TMP/plugin-project"
