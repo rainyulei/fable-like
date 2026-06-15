@@ -24,6 +24,7 @@ enabled_output="$(printf '%s' "$hook_input" | "$ROOT/hooks/fable-lite-context.sh
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); assert "Fable Lite Behavior Layer" in data["hookSpecificOutput"]["additionalContext"]'
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"]; assert "## 1. Communication" in text and "## 8. Token Economy" in text'
 printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"]; assert "Plain Engineering Register" in text and "avoid sweeping claims" in text and "do not use visionary or consultant framing" in text'
+printf '%s' "$enabled_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); text=data["hookSpecificOutput"]["additionalContext"]; assert "Plain coworker working style" in text and "do not package ordinary technical judgment as an insight" in text and "do not turn normal uncertainty into a thesis" in text'
 
 prompt_submit_input='{"cwd":"'"$TMP/project"'","model":"claude-opus-4-8","hook_event_name":"UserPromptSubmit"}'
 prompt_submit_output="$(printf '%s' "$prompt_submit_input" | "$ROOT/hooks/fable-lite-context.sh")"
