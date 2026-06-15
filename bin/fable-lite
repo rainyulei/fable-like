@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+STATE_HOME="${FABLE_LITE_HOME:-$HOME/.claude/opus-to-fable}"
+GLOBAL_STATE="${STATE_HOME}/enabled"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  fable-lite on
+  fable-lite off
+  fable-lite status
+  fable-lite project on
+  fable-lite project off
+  fable-lite project clear
+
+Global state lives in ~/.claude/opus-to-fable/enabled.
+Project overrides live in .claude/opus-to-fable.json.
+EOF
+}
+
+ensure_state_home() {
+  mkdir -p "$STATE_HOME"
+}
+
+write_project_override() {
+  local value="$1"
+  mkdir -p .claude
+  if [ "$value" = "clear" ]; then
+    rm -f .claude/opus-to-fable.json
+  else
+    printf '{\n  "enabled": %s\n}\n' "$value" > .claude/opus-to-fable.json
+  fi
+}
+
+global_status() {
+  if [ -f "$GLOBAL_STATE" ]; then
+    printf 'global: on\n'
+  else
+    printf 'global: off\n'
+  fi
+}
+
+project_status() {
+  if [ -f ".claude/opus-to-fable.json" ]; then
+    python3 - <<'PY' 2>/dev/null || printf 'project: invalid override\n'
+import json
+with open(".claude/opus-to-fable.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+value = data.get("enabled")
+if value is True:
+    print("project: on")
+elif value is False:
+    print("project: off")
+else:
+    print("project: invalid override")
+PY
+  else
+    printf 'project: inherit\n'
+  fi
+}
+
+case "${1:-}" in
+  on)
+    ensure_state_home
+    : > "$GLOBAL_STATE"
+    printf 'Fable Lite global mode: on\n'
+    ;;
+  off)
+    ensure_state_home
+    rm -f "$GLOBAL_STATE"
+    printf 'Fable Lite global mode: off\n'
+    ;;
+  status)
+    global_status
+    project_status
+    ;;
+  project)
+    case "${2:-}" in
+      on)
+        write_project_override true
+        printf 'Fable Lite project override: on\n'
+        ;;
+      off)
+        write_project_override false
+        printf 'Fable Lite project override: off\n'
+        ;;
+      clear)
+        write_project_override clear
+        printf 'Fable Lite project override: cleared\n'
+        ;;
+      *)
+        usage
+        exit 2
+        ;;
+    esac
+    ;;
+  -h|--help|help|"")
+    usage
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac

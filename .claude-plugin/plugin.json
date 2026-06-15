@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "opus-to-fable",
+  "displayName": "Opus to Fable Lite",
+  "description": "Fable Lite behavior layer for Claude Code: terse, tool-heavy, scoped, and verification-oriented.",
+  "version": "0.2.0",
+  "defaultEnabled": false,
+  "author": {
+    "name": "rainlei"
+  }
+}

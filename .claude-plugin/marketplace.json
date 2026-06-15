@@ -1,0 +1,14 @@
+{
+  "name": "opus-to-fable-local",
+  "description": "Local marketplace for the Opus to Fable Lite Claude Code plugin.",
+  "owner": {
+    "name": "rainlei"
+  },
+  "plugins": [
+    {
+      "name": "opus-to-fable",
+      "source": ".",
+      "description": "Fable Lite behavior layer for Claude Code on Opus 4.8."
+    }
+  ]
+}

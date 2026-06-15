@@ -1,0 +1,41 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/fable-lite-context.sh",
+            "timeout": 5,
+            "statusMessage": "Applying Fable Lite context"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/fable-lite-context.sh",
+            "timeout": 5,
+            "statusMessage": "Applying Fable Lite context"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/fable-lite-context.sh",
+            "timeout": 5,
+            "statusMessage": "Checking Fable Lite completion discipline"
+          }
+        ]
+      }
+    ]
+  }
+}
