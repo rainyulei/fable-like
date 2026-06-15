@@ -26,7 +26,7 @@ PY
     --model "$MODEL" \
     --max-budget-usd "$BUDGET" \
     --output-format json \
-    "$prompt" > "$out_file"
+    "$prompt" > "$out_file" < /dev/null
 done
 
 printf 'Results written to %s\n' "$OUT_DIR"
