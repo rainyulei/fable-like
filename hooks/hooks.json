@@ -24,18 +24,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/fable-lite-context.sh",
-            "timeout": 5,
-            "statusMessage": "Checking Fable Lite completion discipline"
-          }
-        ]
-      }
     ]
   }
 }

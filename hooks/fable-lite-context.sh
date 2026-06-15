@@ -6,10 +6,8 @@ PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 
 if [ -n "$PLUGIN_ROOT" ]; then
   PROMPT_FILE="$PLUGIN_ROOT/prompts/fable-lite.md"
-  STOP_PROMPT_FILE="$PLUGIN_ROOT/prompts/stop-reminder.md"
 else
   PROMPT_FILE="${STATE_HOME}/prompts/fable-lite.md"
-  STOP_PROMPT_FILE="${STATE_HOME}/prompts/stop-reminder.md"
 fi
 GLOBAL_STATE="${STATE_HOME}/enabled"
 
@@ -18,6 +16,10 @@ INPUT="$(cat)"
 project_dir="$(printf '%s' "$INPUT" | python3 -c 'import json,sys; data=json.load(sys.stdin); print(data.get("cwd") or data.get("project_dir") or "")' 2>/dev/null || true)"
 model="$(printf '%s' "$INPUT" | python3 -c 'import json,sys; data=json.load(sys.stdin); print(data.get("model") or "")' 2>/dev/null || true)"
 hook_event_name="$(printf '%s' "$INPUT" | python3 -c 'import json,sys; data=json.load(sys.stdin); print(data.get("hook_event_name") or "SessionStart")' 2>/dev/null || true)"
+
+if [ "$hook_event_name" = "Stop" ]; then
+  exit 0
+fi
 
 enabled="false"
 if [ -n "$PLUGIN_ROOT" ]; then
@@ -49,9 +51,6 @@ if [ "$enabled" != "true" ]; then
 fi
 
 context_file="$PROMPT_FILE"
-if [ "$hook_event_name" = "Stop" ]; then
-  context_file="$STOP_PROMPT_FILE"
-fi
 
 if [ ! -f "$context_file" ]; then
   exit 0

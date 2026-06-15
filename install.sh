@@ -9,7 +9,6 @@ LOCAL_BIN="${FABLE_LITE_BIN_DIR:-$HOME/.local/bin}"
 mkdir -p "$INSTALL_DIR/hooks" "$INSTALL_DIR/prompts" "$INSTALL_DIR/output-styles" "$INSTALL_DIR/skills/fable-lite" "$(dirname "$SETTINGS_FILE")" "$LOCAL_BIN" "$HOME/.claude/output-styles" "$HOME/.claude/skills"
 cp "$ROOT/hooks/fable-lite-context.sh" "$INSTALL_DIR/hooks/fable-lite-context.sh"
 cp "$ROOT/prompts/fable-lite.md" "$INSTALL_DIR/prompts/fable-lite.md"
-cp "$ROOT/prompts/stop-reminder.md" "$INSTALL_DIR/prompts/stop-reminder.md"
 cp "$ROOT/output-styles/fable-lite.md" "$INSTALL_DIR/output-styles/fable-lite.md"
 cp "$ROOT/skills/fable-lite/SKILL.md" "$INSTALL_DIR/skills/fable-lite/SKILL.md"
 cp "$ROOT/bin/fable-lite" "$INSTALL_DIR/fable-lite"
@@ -79,7 +78,15 @@ def ensure_event(event, matcher=None):
 
 ensure_event("SessionStart", "startup|resume|clear|compact")
 ensure_event("UserPromptSubmit")
-ensure_event("Stop")
+
+for group in hooks.get("Stop", []):
+    group["hooks"] = [
+        entry for entry in group.get("hooks", [])
+        if not (entry.get("type") == "command" and entry.get("command") == hook_path)
+    ]
+hooks["Stop"] = [group for group in hooks.get("Stop", []) if group.get("hooks")]
+if not hooks.get("Stop"):
+    hooks.pop("Stop", None)
 
 with open(settings_path, "w", encoding="utf-8") as f:
     json.dump(settings, f, indent=2)

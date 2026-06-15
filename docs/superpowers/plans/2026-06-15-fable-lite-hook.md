@@ -4,7 +4,7 @@
 
 **Goal:** Build a Claude Code extension package that lets users toggle an Opus 4.8 "Fable 5 lite" behavior layer globally, with per-project overrides.
 
-**Architecture:** A CLI writes simple state files under `~/.claude/opus-to-fable`. Claude Code runs `SessionStart`, `UserPromptSubmit`, and `Stop` hooks that read global state plus project override files, then inject an 8-section operating contract or stop reminder via `hookSpecificOutput.additionalContext` only when enabled. The installer also registers an optional output style and skill for persistent Fable Lite behavior.
+**Architecture:** A CLI writes simple state files under `~/.claude/opus-to-fable`. Claude Code runs `SessionStart` and `UserPromptSubmit` hooks that read global state plus project override files, then inject an 8-section operating contract via `hookSpecificOutput.additionalContext` only when enabled. The installer also registers an optional output style and skill for persistent Fable Lite behavior.
 
 **Tech Stack:** POSIX shell, Python 3 for JSON-safe settings merge and hook output, Claude Code `settings.json` hooks.
 
@@ -146,3 +146,29 @@ Expected: `Validation passed`.
 
 Run: `bash -n bin/fable-lite hooks/fable-lite-context.sh install.sh uninstall.sh tests/run.sh`
 Expected: exit 0 with no output.
+
+### Task 7: Remove Stop Hook Loop
+
+**Files:**
+- Modify: `hooks/hooks.json`
+- Modify: `hooks/fable-lite-context.sh`
+- Modify: `install.sh`
+- Modify: `tests/run.sh`
+- Modify: `README.md`
+- Delete: `prompts/stop-reminder.md`
+
+- [x] **Step 1: Remove Stop hook registration**
+
+Remove `Stop` from plugin hooks and from CLI installer registration. Keep installer cleanup so an old CLI install removes the previously registered Stop hook command.
+
+- [x] **Step 2: Make Stop input silent**
+
+If the hook receives `hook_event_name: "Stop"`, exit 0 with no output. This prevents Claude Code from treating hook feedback as a reason to block turn completion.
+
+- [x] **Step 3: Verify**
+
+Run: `./tests/run.sh`
+Expected: `All smoke tests passed.`
+
+Run: `claude plugin validate .`
+Expected: `Validation passed`.

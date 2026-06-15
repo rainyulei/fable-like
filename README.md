@@ -9,7 +9,7 @@ This does not change model weights or unlock Claude Fable 5. It layers operating
 The package has four layers:
 
 - `prompts/fable-lite.md`: 8-section operating contract covering communication, effort, tool discipline, autonomy, code quality, verification, safety, and token economy.
-- `hooks/fable-lite-context.sh`: `SessionStart`, `UserPromptSubmit`, and `Stop` hook entrypoint.
+- `hooks/fable-lite-context.sh`: `SessionStart` and `UserPromptSubmit` hook entrypoint.
 - `output-styles/fable-lite.md`: optional Claude Code output style for persistent response style.
 - `skills/fable-lite/SKILL.md`: skill trigger for Fable-like behavior requests.
 

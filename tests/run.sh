@@ -10,7 +10,6 @@ export FABLE_LITE_HOME="$TMP/home/.claude/opus-to-fable"
 mkdir -p "$FABLE_LITE_HOME/hooks" "$FABLE_LITE_HOME/prompts" "$TMP/project"
 cp "$ROOT/hooks/fable-lite-context.sh" "$FABLE_LITE_HOME/hooks/fable-lite-context.sh"
 cp "$ROOT/prompts/fable-lite.md" "$FABLE_LITE_HOME/prompts/fable-lite.md"
-cp "$ROOT/prompts/stop-reminder.md" "$FABLE_LITE_HOME/prompts/stop-reminder.md"
 
 hook_input='{"cwd":"'"$TMP/project"'","model":"claude-opus-4-8","hook_event_name":"SessionStart"}'
 
@@ -32,7 +31,17 @@ printf '%s' "$prompt_submit_output" | python3 -c 'import json,sys; data=json.loa
 
 stop_input='{"cwd":"'"$TMP/project"'","model":"claude-opus-4-8","hook_event_name":"Stop"}'
 stop_output="$(printf '%s' "$stop_input" | "$ROOT/hooks/fable-lite-context.sh")"
-printf '%s' "$stop_output" | python3 -c 'import json,sys; data=json.load(sys.stdin); assert data["hookSpecificOutput"]["hookEventName"] == "Stop"; assert "Before ending the turn" in data["hookSpecificOutput"]["additionalContext"]'
+if [ -n "$stop_output" ]; then
+  printf 'Expected Stop hook to emit nothing, got: %s\n' "$stop_output" >&2
+  exit 1
+fi
+
+active_stop_input='{"cwd":"'"$TMP/project"'","model":"claude-opus-4-8","hook_event_name":"Stop","stop_hook_active":true}'
+active_stop_output="$(printf '%s' "$active_stop_input" | "$ROOT/hooks/fable-lite-context.sh")"
+if [ -n "$active_stop_output" ]; then
+  printf 'Expected active Stop hook to emit nothing, got: %s\n' "$active_stop_output" >&2
+  exit 1
+fi
 
 cd "$TMP/project"
 "$ROOT/bin/fable-lite" project off >/dev/null
@@ -66,7 +75,7 @@ with open(sys.argv[1], "r", encoding="utf-8") as f:
 hooks = settings["hooks"]
 assert "SessionStart" in hooks
 assert "UserPromptSubmit" in hooks
-assert "Stop" in hooks
+assert "Stop" not in hooks
 PY
 
 conflict_tmp="$TMP/conflict"
@@ -93,7 +102,7 @@ with open(sys.argv[2], "r", encoding="utf-8") as f:
     hooks = json.load(f)["hooks"]
 assert "SessionStart" in hooks
 assert "UserPromptSubmit" in hooks
-assert "Stop" in hooks
+assert "Stop" not in hooks
 PY
 
 mkdir -p "$TMP/plugin-project"
